@@ -3,5 +3,5 @@
 struct Coordinate
 {
     /* data */
-    float x,y,z = 0;
+    float x,y = 0;
 };
