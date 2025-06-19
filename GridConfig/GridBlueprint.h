@@ -9,5 +9,4 @@ struct GridBlueprint
     int m_roomMaxSize;
     int m_gridEdgeBuffer;
     int m_roomCount;
-    bool is3D;
 };

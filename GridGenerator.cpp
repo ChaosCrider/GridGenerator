@@ -5,47 +5,35 @@
 #include <iostream>
 
 GridGenerator::GridGenerator(GridBlueprint blueprint)
-    : m_gridIterator(),
-    m_blueprint(blueprint) {}
-
-void GridGenerator::loadTileSet(std::unordered_map<eTileType, std::unique_ptr<int>> tileset){
-    m_assetMap = std::move(tileset);
-}
-
-void GridGenerator::setTileSpawner(eGenerationSteps genStep){
-    auto hit = m_tileSpawnerStrategy.find(genStep);
-    if (hit != m_tileSpawnerStrategy.end()){
-        m_tileSpawner = m_tileSpawnerStrategy[genStep];
-    }
-}
-
-void GridGenerator::setTileFinder(eGenerationSteps genStep){
-    auto hit = m_tileFinderStrategy.find(genStep);
-    if (hit != m_tileFinderStrategy.end()) {
-        m_tileFinder = m_tileFinderStrategy[genStep];   
-    }
-}
+    : m_blueprint(blueprint) {}
 
 std::vector<std::vector<eTileType>> GridGenerator::generate(){
-    m_grid = std::vector<std::vector<eTileType>>(m_blueprint.m_gridHeight, std::vector<eTileType>(m_blueprint.m_gridWidth, eTileType::x));
 
-    ITileProcessor* processor = dynamic_cast<ITileProcessor*>(m_tileFinder);
-    if (processor){
-        m_gridIterator->iterate(processor, m_grid);
-        if(!processor->validate()){
+    //Generate the empty grid
+    std::vector<std::vector<eTileType>> m_grid = std::vector<std::vector<eTileType>>(m_blueprint.m_gridHeight, std::vector<eTileType>(m_blueprint.m_gridWidth, eTileType::x));
+
+    /* vestigial
+    
+        //Generate rooms
+    std::shared_ptr<ILayoutGenerator> generator = std::dynamic_pointer_cast<ILayoutGenerator>(m_roomMapper);
+    if (generator){
+        m_gridIterator->iterate(generator, m_grid);
+        if(!generator->validate()){
             std::cout << "error on Room Generation";
         }
     }
 
-    processor = dynamic_cast<ITileProcessor*>(m_coddirdorMapper);
-    if (processor){
-        m_gridIterator->iterate(processor, m_grid);
-        if(!processor->validate()){
+    //Links room with corridors
+    generator = std::dynamic_pointer_cast<ILayoutGenerator>(m_corridorMapper);
+    if (generator){
+        m_gridIterator->iterate(generator, m_grid);
+        if(!generator->validate()){
             std::cout << "error on Corridor Generation";
         }
     }
 
-        processor = dynamic_cast<ITileProcessor*>(m_tileSpawner);
+    //Change unprocessed tile into walls, floors and doors.
+    std::shared_ptr<ITileProcessor> processor = std::dynamic_pointer_cast<ITileProcessor>(m_tileSpawner);
     if (processor){
         m_gridIterator->iterate(processor, m_grid);
         if(!processor->validate()){
@@ -53,5 +41,18 @@ std::vector<std::vector<eTileType>> GridGenerator::generate(){
         }
     }
 
+
+
+    */
+
+    m_grid = layoutGenerator->generate(m_blueprint, m_grid);
+    
+    m_grid = tileProcessor->generate(m_grid);
+
+
     return m_grid;
+}
+
+void spawnLevel(std::vector<std::vector<eTileType>> grid){
+        std::vector<std::vector<eTileType>> m_grid = grid;
 }
