@@ -22,7 +22,7 @@ class ILayoutGenerator{
     public : 
 
         // vestigial
-        virtual std::vector<std::vector<eTileType>> iterate(GridBlueprint blueprint, std::vector<std::vector<eTileType>> grid) = 0;
+        //virtual std::vector<std::vector<eTileType>> iterate(GridBlueprint blueprint, std::vector<std::vector<eTileType>> grid) = 0;
 
         // entry point of the logic, use to insert the different elements to prepare what gameobject should go where.
         virtual std::vector<std::vector<eTileType>> generate(GridBlueprint blueprint, std::vector<std::vector<eTileType>> grid) = 0;
