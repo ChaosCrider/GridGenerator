@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\3dSpace">
+      <UniqueIdentifier>{9feef93b-2764-4912-ab3c-6c94dde63783}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GridConfig">
+      <UniqueIdentifier>{6cec51fd-c62d-4fed-962f-6b2af89ce83d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\LevelSculptor">
+      <UniqueIdentifier>{9db93700-1a73-4970-8721-218e7b8dfb17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\TileProcessor">
+      <UniqueIdentifier>{15677bdc-e5b2-4126-93ee-0f5fdbce1a75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utilities">
+      <UniqueIdentifier>{ca3aa1a2-615b-4a79-9060-b60857931315}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\3dSpace">
+      <UniqueIdentifier>{cb504586-7fe3-45a7-b4ac-3601e6b33e7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GridConfig">
+      <UniqueIdentifier>{dfb7f78c-9357-4439-8a4f-a285aee2ac43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\LevelSculptor">
+      <UniqueIdentifier>{2db1ce0d-0ca9-4b91-8a48-e40cbff930b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\TileProcessor">
+      <UniqueIdentifier>{d0f4a8d2-baf7-4876-868e-b9009d72764f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utilities">
+      <UniqueIdentifier>{c93ae814-6f02-48a1-aa2f-3736d8d3df30}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="GridGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GridData.cpp">
+      <Filter>Source Files\3dSpace</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicLayoutGenerator.cpp">
+      <Filter>Source Files\LevelSculptor</Filter>
+    </ClCompile>
+    <ClCompile Include="RandomCoordGenerator.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="UnionFinder.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicTileProcessor.cpp">
+      <Filter>Source Files\TileProcessor</Filter>
+    </ClCompile>
+    <ClCompile Include="GridManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TileScanner.cpp">
+      <Filter>Source Files\3dSpace</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Coordinate.h">
+      <Filter>Header Files\3dSpace</Filter>
+    </ClInclude>
+    <ClInclude Include="ETileType.h">
+      <Filter>Header Files\3dSpace</Filter>
+    </ClInclude>
+    <ClInclude Include="GridData.h">
+      <Filter>Header Files\3dSpace</Filter>
+    </ClInclude>
+    <ClInclude Include="GridBlueprint.h">
+      <Filter>Header Files\GridConfig</Filter>
+    </ClInclude>
+    <ClInclude Include="ILayoutGenerator.h">
+      <Filter>Header Files\LevelSculptor</Filter>
+    </ClInclude>
+    <ClInclude Include="IRoomMapper.h">
+      <Filter>Header Files\LevelSculptor</Filter>
+    </ClInclude>
+    <ClInclude Include="IFeatureMapper.h">
+      <Filter>Header Files\LevelSculptor</Filter>
+    </ClInclude>
+    <ClInclude Include="ICorridorMapper.h">
+      <Filter>Header Files\LevelSculptor</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicLayoutGenerator.h">
+      <Filter>Header Files\LevelSculptor</Filter>
+    </ClInclude>
+    <ClInclude Include="RandomCoordGenerator.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="UnionFinder.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="IWallMapper.h">
+      <Filter>Header Files\TileProcessor</Filter>
+    </ClInclude>
+    <ClInclude Include="ITileProcessor.h">
+      <Filter>Header Files\TileProcessor</Filter>
+    </ClInclude>
+    <ClInclude Include="IFloorMapper.h">
+      <Filter>Header Files\TileProcessor</Filter>
+    </ClInclude>
+    <ClInclude Include="IDoorMapper.h">
+      <Filter>Header Files\TileProcessor</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicTileProcessor.h">
+      <Filter>Header Files\TileProcessor</Filter>
+    </ClInclude>
+    <ClInclude Include="GridManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TileScanner.h">
+      <Filter>Header Files\3dSpace</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
