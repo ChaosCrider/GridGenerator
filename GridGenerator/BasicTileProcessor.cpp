@@ -79,6 +79,33 @@ void BasicTileProcessor::processWalls() {
 
 void BasicTileProcessor::processDoors() {
 
+	// Loop through the grid and check for corridor tiles.
+	coordinate scanRange[] = {
+		coordinate(-1, 0), // Left
+		coordinate(1, 0),  // Right
+		coordinate(0, -1), // Top
+		coordinate(0, 1)   // Bottom
+	};
+
+	for (int x = 0; x < m_blueprint.m_gridWidth; x++) {
+		for (int y = 0; y < m_blueprint.m_gridHeight; y++) {
+			// check if the tile is a corridor tile
+			if (m_grid[coordinate(x, y).getIndex(m_blueprint)] == getTileTypeFromLegend('c')) {
+				// loop through the scan range
+				for (const auto& offset : scanRange) {
+					int neighborX = x + offset.x;
+					int neighborY = y + offset.y;
+					// Get the index of the neighbor tile
+					int index = coordinate(neighborX, neighborY).getIndex(m_blueprint);
+					// If the neighbor tile is a room floor, write door tile to the grid
+					if (m_grid[index] == getTileTypeFromLegend('r')) {
+						m_grid[coordinate(x, y).getIndex(m_blueprint)] = getTileTypeFromLegend('d'); // Write door tile
+						break; // Exit loop after finding a room floor
+					}
+				}
+			}
+		}
+	}
 }
 
 
