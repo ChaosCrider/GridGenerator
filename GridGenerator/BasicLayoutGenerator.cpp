@@ -193,7 +193,7 @@
                     // from min +1 to max -1, check for surounding obstacles using TileScanner
                     for (int y = upperAnchor.y + 1; y < midPoint.y-1; y++) {
                         // if not 0 then adjust midPoint.x and upperAncor.x by +1
-                        if (scanner.countSurroundingTiles(coordinate(midPoint.x, upperAnchor.y + y), 2, 2, m_grid, NeighborCheckMode::EightWay))
+                        if (scanner.countSurroundingTiles(coordinate(midPoint.x, upperAnchor.y + y), m_blueprint, m_grid, NeighborCheckMode::EightWay))
                             midPoint.x++;
     			            upperAnchor.x++;
                             break;
@@ -216,7 +216,8 @@
                     }
                     for (x; x < targetX; x++) {
                         // if not 0 then adjust midPoint.y and upperAncor.y by +1
-                        if (scanner.countSurroundingTiles(coordinate(upperAnchor.x + x, midPoint.y), m_blueprint.m_gridWidth, m_blueprint.m_gridHeight, m_grid, NeighborCheckMode::EightWay)) {
+                        coordinate tile = coordinate(upperAnchor.x, midPoint.y);
+                        if (scanner.countSurroundingTiles(tile, m_blueprint, m_grid, NeighborCheckMode::EightWay)) {
                             midPoint.y++;
                             lowerAnchor.y++;
                             break;

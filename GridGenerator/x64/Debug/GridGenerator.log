@@ -1,3 +1,4 @@
-﻿  BasicLayoutGenerator.cpp
-D:\work\Code\Cpp\RandomLevelGenerator\GridGeneratorVS2022\GridGenerator\GridGenerator\BasicLayoutGenerator.cpp(66,39): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+﻿  BasicTileProcessor.cpp
+  GridManager.cpp
+  Generating Code...
   GridGenerator.vcxproj -> D:\work\Code\Cpp\RandomLevelGenerator\GridGeneratorVS2022\GridGenerator\x64\Debug\GridGenerator.exe

@@ -35,17 +35,21 @@ inline std::string to_string(ETileType tileType) {
     Legend:
     	x - empty tile
 		r - room floor tile
-		w - wall tile
+        c - corridor tile
+        w - wall tile
+		l - Inner Corner Wall
+		. - corner wall tile
 		d - door tile
-		c - corridor tile
 */
 inline ETileType getTileTypeFromLegend(const char index) {
     switch (index) {
 	    case 'x': return ETileType::empty;
 	    case 'r': return ETileType::RoomFloor; // room floor tile
-	    case 'w': return ETileType::StraigthWall; // wall tile
+        case 'c': return ETileType::CorridorFloor; // corridor tile
+        case 'w': return ETileType::StraigthWall; // wall tile
+		case 'l': return ETileType::InnerCornerWall; // Inner Corner Wall
+		case '.': return ETileType::CornerWall; // corner wall tile
 	    case 'd': return ETileType::Door; // door tile
-	    case 'c': return ETileType::CorridorFloor; // corridor tile
     }
     return empty; // Default case
 }
