@@ -5,6 +5,8 @@
 #include <vector>
 #include <optional>
 #include <iostream>
+#include <algorithm>
+#include <string>
 
 
 TileScanner::TileScanner(){}
@@ -16,7 +18,7 @@ TileScanner::TileScanner(){}
  * If no filter is provided, all tiles that are not ETileType::None are counted.
  */
 
-int TileScanner::countSurroundingTiles(coordinate center, const GridBlueprint& blueprint, const std::vector<ETileType>& grid, NeighborCheckMode mode, std::optional<ETileType> filter)
+int TileScanner::countSurroundingTiles(coordinate center, const GridBlueprint& blueprint, const std::vector<ETileType>& grid, NeighborCheckMode mode, std::optional<std::vector<ETileType>> filter)
 {
     int count = 0; // Total count of matching neighbors
 
@@ -79,12 +81,17 @@ int TileScanner::countSurroundingTiles(coordinate center, const GridBlueprint& b
         int ny = y + dy; // Neighbor Y
 
         // Convert 2D coords to 1D index in the flat grid vector
-        int index = coordinate(ny, nx).getIndex(blueprint);
+        int index = coordinate(nx, ny).getIndex(blueprint);
         ETileType tile = grid[index];
 
         // If a filter is provided, only count tiles that match it
         if (filter.has_value()) {
-            if (tile == filter.value()) {
+            std::string filterList;
+            for (const auto& t : filter.value()) {
+                filterList += to_string(t) + " ";
+			}
+
+            if (std::find(filter.value().begin(), filter.value().end(), tile) != filter.value().end()) { //tile == filter.value()
                 count++;
             }
         }
@@ -144,28 +151,28 @@ ETileType TileScanner::scanWallType(coordinate tile, std::vector<ETileType>& gri
     #pragma region Scan sides
 
         ETileType interogatedTile = grid[coordinate(x - 1, y).getIndex(blueprint)];
-        if (interogatedTile == getTileTypeFromLegend('c') || interogatedTile == getTileTypeFromLegend('f')) {
+        if (interogatedTile == getTileTypeFromLegend('c') || interogatedTile == getTileTypeFromLegend('r')) {
 		    vhit = true; // Vertical hit found
             count++;
         }
 
 	    // scan right
         interogatedTile = grid[coordinate(x + 1, y).getIndex(blueprint)];
-        if (interogatedTile == getTileTypeFromLegend('c') || interogatedTile == getTileTypeFromLegend('f')) {
+        if (interogatedTile == getTileTypeFromLegend('c') || interogatedTile == getTileTypeFromLegend('r')) {
             vhit = true; // Vertical hit found
             count++;
         }
 
 	    // scan up
         interogatedTile = grid[coordinate(x, y - 1).getIndex(blueprint)];
-        if (interogatedTile == getTileTypeFromLegend('c') || interogatedTile == getTileTypeFromLegend('f')) {
+        if (interogatedTile == getTileTypeFromLegend('c') || interogatedTile == getTileTypeFromLegend('r')) {
             vhit = true; // Vertical hit found
             count++;
         }
 
 	    // scan down
         interogatedTile = grid[coordinate(x, y + 1).getIndex(blueprint)];
-        if (interogatedTile == getTileTypeFromLegend('c') || interogatedTile == getTileTypeFromLegend('f')) {
+        if (interogatedTile == getTileTypeFromLegend('c') || interogatedTile == getTileTypeFromLegend('r')) {
             vhit = true; // Vertical hit found
             count++;
         }
@@ -183,7 +190,7 @@ ETileType TileScanner::scanWallType(coordinate tile, std::vector<ETileType>& gri
 	};
     for (const auto& corner : fourCorners) {
         interogatedTile = grid[coordinate(corner.x, corner.y).getIndex(blueprint)];
-        if (interogatedTile == getTileTypeFromLegend('c') || interogatedTile == getTileTypeFromLegend('f')) {
+        if (interogatedTile == getTileTypeFromLegend('c') || interogatedTile == getTileTypeFromLegend('r')) {
             count++;
         }
     }

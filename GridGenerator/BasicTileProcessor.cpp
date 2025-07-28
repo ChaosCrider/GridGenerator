@@ -46,34 +46,39 @@ void BasicTileProcessor::processWalls() {
 	};
 
 	//for loop on the grid
-    for (int y = 0; y < m_blueprint.m_gridHeight; ++y) {
-        for (int x = 0; x < m_blueprint.m_gridWidth; ++x) {
-            // check if the tile is a floor
+   // Loop through each row in the grid
+	for (int y = 0; y < m_blueprint.m_gridHeight; ++y) {
+		// Loop through each column in the grid
+		for (int x = 0; x < m_blueprint.m_gridWidth; ++x) {
+			// Get the tile type at position (x, y)
 			ETileType tileType = m_grid[coordinate(x, y).getIndex(m_blueprint)];
+
+			// Check if the current tile is a floor tile of type 'c' or 'r'
 			if (tileType == getTileTypeFromLegend('c') || tileType == getTileTypeFromLegend('r')) {
-			// cycle through all surounding tiles
-				for (const auto & offset : scanRange) {
+				// Loop through all offsets around the current tile (i.e., neighboring tiles)
+				for (const auto& offset : scanRange) {
 					int neighborX = x + offset.x;
 					int neighborY = y + offset.y;
-					// Get the index of the neighbor tile
+
+					// Get the index of the neighboring tile in the 1D grid array
 					int index = coordinate(neighborX, neighborY).getIndex(m_blueprint);
-					// If the tile is empty, process it
+
+					// Check if the neighboring tile is empty ('x' in the legend)
 					if (m_grid[index] == getTileTypeFromLegend('x')) {
-						// Scan for wall type
-						std::cout << "Processing wall for tile at (" << neighborX << ", " << neighborY << ")\n";
-						ETileType wallType = m_tileScanner.scanWallType(coordinate(neighborX, neighborY), m_grid, m_blueprint);
-						m_grid[index] = wallType; // Write wall type to the grid
+						// Determine the appropriate wall type based on surroundings
+						ETileType wallType = m_tileScanner.scanWallType(
+							coordinate(neighborX, neighborY),
+							m_grid,
+							m_blueprint
+						);
+
+						// Update the grid with the determined wall type
+						m_grid[index] = wallType;
 					}
 				}
 			}
-        }
-    }
-
-
-	//process the surrounding tiles to determine wall type
-
-	//write wall type to the grid
-
+		}
+	}
 }
 
 
@@ -110,7 +115,35 @@ void BasicTileProcessor::processDoors() {
 
 
 void BasicTileProcessor::processFloors() {
+	TileScanner tileScanner = TileScanner();
 
+	// Loop through the grid and check for room floor tiles.
+	for (int x = 0; x < m_blueprint.m_gridWidth; x++) {
+		for (int y = 0; y < m_blueprint.m_gridHeight; y++) {
+			if (m_grid[coordinate(x, y).getIndex(m_blueprint)] == getTileTypeFromLegend('r')) {
+				// Scan range four way for checking surrounding tiles to see the amount of other room floor tiles.
+				std::vector<ETileType> floorSymbols = { getTileTypeFromLegend('r'), getTileTypeFromLegend('i'), getTileTypeFromLegend('f') };
+				int neighborCount = 
+					tileScanner.countSurroundingTiles(
+						coordinate(x, y),
+						m_blueprint,
+						m_grid,
+						NeighborCheckMode::FourWay,
+						floorSymbols
+						);
+				// if 2 then corner floor tile, if 3 then wall floor tile, if 4 no change to do.
+				if (neighborCount == 2) {
+					m_grid[coordinate(x, y).getIndex(m_blueprint)] = getTileTypeFromLegend('i'); // Change to corner floor tile
+				} else if (neighborCount == 3) {
+					m_grid[coordinate(x, y).getIndex(m_blueprint)] = getTileTypeFromLegend('f'); // Change to wall floor tile
+				}
+			}
+
+
+
+
+		}
+	}
 }
 
 

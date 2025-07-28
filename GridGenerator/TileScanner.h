@@ -17,7 +17,7 @@ class TileScanner
 {
 public:
 	TileScanner();
-    int countSurroundingTiles( coordinate center, const GridBlueprint& blueprint, const std::vector<ETileType>& grid, NeighborCheckMode mode, std::optional<ETileType> filter = std::nullopt);
+	int countSurroundingTiles(coordinate center, const GridBlueprint& blueprint, const std::vector<ETileType>& grid, NeighborCheckMode mode, std::optional<std::vector<ETileType>> filter = std::nullopt);
 	std::vector<coordinate> scanForWall(coordinate center, const std::vector<ETileType>& grid, const GridBlueprint& blueprint);
 	ETileType scanWallType(coordinate tile, std::vector<ETileType>& grid, GridBlueprint& blueprint);
 };
