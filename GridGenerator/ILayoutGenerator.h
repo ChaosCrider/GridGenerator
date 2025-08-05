@@ -6,6 +6,7 @@
 #include "GridBlueprint.h"
 #include "IRoomMapper.h"
 #include "ICorridorMapper.h"
+#include "gridData.h"
 
 class ILayoutGenerator {
 
@@ -23,7 +24,7 @@ protected:
 
 public:
     // entry point of the logic, use to insert the different elements to prepare what gameobject should go where.
-    virtual std::vector<ETileType> generate(GridBlueprint blueprint, std::vector<ETileType> grid) = 0;
+    virtual ProtoGridData generate(ProtoGridData protoGridData) = 0;
 
     //necessary to amke sure the resulting map is usable.
     virtual bool validate() = 0;

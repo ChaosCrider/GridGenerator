@@ -3,12 +3,7 @@
 #include "eTileType.h"
 #include "GridBlueprint.h"
 #include "RandomCoordGenerator.h"
-
-struct corridor {
-    int start; // Room id for the start point of the corridor
-    int end;   // Room id for the end point of the corridor
-    int length; // Length of the corridor
-};
+#include "gridData.h"
 
 class BasicLayoutGenerator : public ILayoutGenerator {
 
@@ -33,6 +28,8 @@ private:
     bool isRoomValid(const coordinate& point1, const coordinate& point2);
     std::pair<coordinate, coordinate> makeRoomCoordinates();
     bool tryAddRoom();
+	std::pair<coordinate, coordinate> createEntryPoints();
+	void writeEntryPoints(ProtoGridData tempGridData);
 
     std::vector<corridor> createCorridorCandidate(std::vector<std::pair<coordinate, coordinate>> roomList);
 
@@ -41,7 +38,7 @@ public:
     BasicLayoutGenerator();
     ~BasicLayoutGenerator();
 
-    std::vector<ETileType> generate(GridBlueprint blueprint, std::vector<ETileType> grid) override;
+    ProtoGridData generate(ProtoGridData protoGridData) override;
     bool validate() override;
 };
 

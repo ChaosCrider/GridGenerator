@@ -12,7 +12,9 @@ enum ETileType {
     CornerWallFloor, // floor next to a corner wall
     InnerCornerWallFloor, // floor next to an intrernal wall floor
     RoomFloor, // floor surounded by other floor
-	CorridorFloor // floor in a corridor
+	CorridorFloor, // floor in a corridor
+	EntryPoint, // entry point tile
+	EndPoint // end point tile
 };
 
 inline std::string to_string(ETileType tileType) {
@@ -27,6 +29,8 @@ inline std::string to_string(ETileType tileType) {
     case InnerCornerWallFloor:  return "i";
     case RoomFloor:     return "r";
     case CorridorFloor:     return "c";
+	case EntryPoint: return "="; // Entry point tile
+	case EndPoint: return "#"; // End point tile
     default:    return "_";
     }
 }
@@ -54,6 +58,8 @@ inline ETileType getTileTypeFromLegend(const char index) {
 		case 'l': return ETileType::InnerCornerWall; // Inner Corner Wall
 		case '.': return ETileType::CornerWall; // corner wall tile
 	    case 'd': return ETileType::Door; // door tile
+		case '=': return ETileType::EntryPoint; // Entry point tile
+		case '#': return ETileType::EndPoint; // End point tile
     }
     return empty; // Default case
 }

@@ -15,11 +15,13 @@ const GridData& GridManager::generate() {
 
     //Generate the empty grid
     std::vector<ETileType> m_grid = std::vector<ETileType>(m_blueprint.m_gridHeight * m_blueprint.m_gridWidth, ETileType::empty);
-    m_grid = m_layoutGenerator->generate(m_blueprint, m_grid);
-	m_grid = m_tileProcessor->generate(m_grid, m_blueprint);
+
+	ProtoGridData tempGridData(m_grid, m_blueprint);
+    tempGridData = m_layoutGenerator->generate(tempGridData);
+    tempGridData = m_tileProcessor->generate(tempGridData);
 
     //m_grid = m_tileProcessor->generate(m_grid);
-    m_gridData.emplace(m_grid, m_blueprint);
+    m_gridData.emplace(tempGridData);
 
     return *m_gridData;
 }

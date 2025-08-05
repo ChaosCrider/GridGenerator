@@ -35,11 +35,22 @@ int main() {
 
         const GridData grid = generator.generate();
 
+        int s = grid.debugLength();
+
+        std::cout << s << std::endl;
+
+		std::cout << " *|";
+        for (int i = 0 ; i < grid.getWidth(); i++) {
+            std::cout << std::setw(2)  << i << "|";
+		}
+		std::cout << "\n";
+
         for (int i = 0; i < grid.getWidth(); i++) {
-            std::cout << "|";
+            std::cout << std::setw(2) << i << "|";
             for (int y = 0; y < grid.getHeight(); y++)
             {
-                std::cout << to_string(grid.getTile(i, y)) << "|";
+
+				std::cout << std::setw(2) << to_string(grid.getTile(i, y)) << "|";
             }
             std::cout << "\n";
         }

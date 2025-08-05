@@ -9,10 +9,16 @@
 #include "RandomCoordGenerator.h"
 #include "UnionFinder.h"
 #include "TileScanner.h"
+#include "GridBlueprint.h"
+#include "GridData.h"
+#include <map>
+#include "EndPointFinder.h"
+#include <cstdlib>
 
 #pragma region Constructor/Destructor
 
     BasicLayoutGenerator::~BasicLayoutGenerator() = default;
+
 
     BasicLayoutGenerator::BasicLayoutGenerator() : m_roomList(), m_blueprint(), m_rCoordGen(), corridorTree() {}
 
@@ -21,16 +27,32 @@
 #pragma region Public Methods
 //public methods
 
-    std::vector<ETileType> BasicLayoutGenerator::generate(GridBlueprint blueprint, std::vector<ETileType> grid) {
+    ProtoGridData BasicLayoutGenerator::generate(ProtoGridData protoGridData) {
 
-        m_grid = grid;
-        m_blueprint = blueprint;
+        m_grid = protoGridData.m_grid;
+        m_blueprint = protoGridData.m_blueprint;
         generateRoomList();
         writeRoom();
         generateCorridor();
         writeCorridor();
+        
 
-        return m_grid;
+		ProtoGridData tempGridData(m_grid, m_blueprint);
+		tempGridData.m_roomList = m_roomList;
+		tempGridData.entryPoints = createEntryPoints();
+
+        writeEntryPoints(tempGridData);
+
+
+        // print a full list of all the rooms in the tree
+        std::cout << "Room list:" << std::endl;
+        for (int i = 0; i < m_roomList.size(); i++) {
+            std::cout << "ID : " << i << ", P1.x: " << m_roomList[i].first.x << ", P1.y: " << m_roomList[i].first.y << " / ";
+            std::cout << "ID : " << i << ", P2.x: " << m_roomList[i].second.x << ", P2.y: " << m_roomList[i].second.y << std::endl;
+        }
+
+
+        return tempGridData;
     }
 
     bool BasicLayoutGenerator::validate() {
@@ -68,8 +90,8 @@
         // iterate through the sorted corridors
         // Kruskal’s Algorithm - use union-find to check if the rooms are connected.
         for (const auto& corridor : corridorCandidates) {
-            auto u = corridor.start;
-            auto v = corridor.end;
+            auto u = corridor.startRoom;
+            auto v = corridor.endRoom;
             if (!uf.connected(u, v)) {
                 uf.unionSets(u, v); // Union the sets
                 corridorTree.push_back(corridor); // Add to the final corridor list
@@ -238,14 +260,14 @@
 
                     // Calculate the center point of room A by averaging its top-left and bottom-right coordinates
                     coordinate roomA(
-                        (m_roomList[corridor.start].first.x + m_roomList[corridor.start].second.x) / 2,
-                        (m_roomList[corridor.start].first.y + m_roomList[corridor.start].second.y) / 2
+                        (m_roomList[corridor.startRoom].first.x + m_roomList[corridor.startRoom].second.x) / 2,
+                        (m_roomList[corridor.startRoom].first.y + m_roomList[corridor.startRoom].second.y) / 2
                     );
 
                     // Calculate the center point of room B
                     coordinate roomB(
-                        (m_roomList[corridor.end].first.x + m_roomList[corridor.end].second.x) / 2,
-                        (m_roomList[corridor.end].first.y + m_roomList[corridor.end].second.y) / 2
+                        (m_roomList[corridor.endRoom].first.x + m_roomList[corridor.endRoom].second.x) / 2,
+                        (m_roomList[corridor.endRoom].first.y + m_roomList[corridor.endRoom].second.y) / 2
                     );
 
                     // Initialize the midpoint of the corridor connection
@@ -258,16 +280,16 @@
                             midPoint = coordinate(roomA.x, roomB.y);
 
                             // Adjust roomA.y to the bottom edge of roomA (to avoid drawing corridor inside the room)
-                            roomA.y = m_roomList[corridor.start].second.y;
+                            roomA.y = m_roomList[corridor.startRoom].second.y;
 
                             // Depending on the horizontal relationship, adjust roomB.x to the edge of roomB
                             if (roomA.x < roomB.x) {
                                 // roomB is to the right of roomA; use left edge of roomB
-                                roomB.x = m_roomList[corridor.end].first.x;
+                                roomB.x = m_roomList[corridor.endRoom].first.x;
                             }
                             else {
                                 // roomB is to the left of roomA; use right edge of roomB
-                                roomB.x = m_roomList[corridor.end].second.x;
+                                roomB.x = m_roomList[corridor.endRoom].second.x;
                             }
 
                             // Handle potential overlap or padding around the L-shaped corridor
@@ -286,16 +308,16 @@
                             midPoint = coordinate(roomA.x, roomB.y);
 
                             // Adjust roomA.y to the upper* edge of roomA (to avoid drawing corridor inside the room)
-                            roomA.y = m_roomList[corridor.start].first.y;
+                            roomA.y = m_roomList[corridor.startRoom].first.y;
 
                             // Depending on the horizontal relationship, adjust roomB.x to the edge of roomB
                             if (roomA.x < roomB.x) {
                                 // roomB is to the right of roomA; use left edge of roomB
-                                roomB.x = m_roomList[corridor.end].first.x;
+                                roomB.x = m_roomList[corridor.endRoom].first.x;
                             }
                             else {
                                 // roomB is to the left of roomA; use right edge of roomB
-                                roomB.x = m_roomList[corridor.end].second.x;
+                                roomB.x = m_roomList[corridor.endRoom].second.x;
                             }
 
                             // Handle potential overlap or padding around the L-shaped corridor
@@ -338,6 +360,88 @@
                         m_grid[room.x + (y * m_blueprint.m_gridWidth)] = getTileTypeFromLegend('c'); 
                     }
                 }
+            }
+
+        #pragma endregion
+
+        #pragma region entry points
+
+            std::pair<coordinate, coordinate> BasicLayoutGenerator::createEntryPoints() {
+				
+                // Create entry points with the corridor trees first and last room coordinates
+
+				int lowestID = m_roomList.size() -1;
+				int highestID = 0;
+
+				// roomId / rooms connected to it
+                std::map<int, std::vector<int>> roomConnections;
+
+				// Iterate through the corridorTree define every roomId and the rooms connected to it.
+				for (const auto& corridor : corridorTree) {
+					// check if the startRoom roomId already exists in the vector
+                    if (roomConnections.find(corridor.startRoom) == roomConnections.end()) {
+                        // if not, create a new pair with the roomId and add the endRoom to the vector
+						roomConnections[corridor.startRoom].push_back(corridor.endRoom);
+                    }
+                    else
+                    {   // else the startRoom exists, add the endRoom to the vector of connected rooms
+                            roomConnections[corridor.startRoom].push_back(corridor.endRoom);
+                    }
+
+                    // if the endRoom roomId already exists in the vector
+                    if (roomConnections.find(corridor.endRoom) != roomConnections.end()) {
+                        // if not, create a new pair with the roomId and add the startRoom to the vector
+						roomConnections[corridor.endRoom].push_back(corridor.startRoom);
+                    }
+                    else{
+                        // else if it exists, add the startRoom to the vector of connected rooms
+						roomConnections[corridor.endRoom].push_back(corridor.startRoom);
+                    }
+                }
+                                
+				// Create a vector to hold room ids with only one corridor connection
+                EndPointFinder epf;
+                std::vector<corridor> endPoints = epf.findEndPoints(corridorTree);
+                std::cout << "endPoints.size = " << endPoints.size() << std::endl;
+                std::cout << " " << std::endl;
+
+
+				// corridor with the longest path
+				corridor longestPath = endPoints[0];
+
+				std::cout << "Looking for longest endPoints: " << std::endl;
+                for (const auto& path : endPoints) {
+                    std::cout << "Current longest path: " << longestPath.startRoom << " -> " << longestPath.endRoom << " with length :" << longestPath.length << std::endl; ;
+                    std::cout << "Current path: " << path.startRoom << " -> " << path.endRoom  << " with length: " << path.length << std::endl;
+                    if (path.length > longestPath.length) {
+						std::cout << "New longest path found, updating to length: " << path.length << std::endl;
+                        longestPath = path; // Update longest path if current is longer
+                    }
+				}
+
+				std::cout << " " << std::endl;
+				std::cout << "Longest path found: " << longestPath.startRoom << " -> " << longestPath.endRoom << " with length: " << longestPath.length << std::endl;
+                std::cout << " " << std::endl;
+
+                coordinate startPoint = {
+                std::abs((m_roomList[longestPath.startRoom].first.x + m_roomList[longestPath.startRoom].second.x) / 2),
+                std::abs((m_roomList[longestPath.startRoom].first.y + m_roomList[longestPath.startRoom].second.y) / 2)
+                };
+				coordinate endPoint = {
+                std::abs((m_roomList[longestPath.endRoom].first.x + m_roomList[longestPath.endRoom].second.x) / 2),
+                std::abs((m_roomList[longestPath.endRoom].first.y + m_roomList[longestPath.endRoom].second.y) / 2)
+                };
+
+                return { startPoint, endPoint };
+
+			}
+
+            void BasicLayoutGenerator::writeEntryPoints(ProtoGridData tempGridData)
+            {
+				// write the entry points to the grid
+				std::cout << "entry points: " << tempGridData.entryPoints.first.toString() << " and " << tempGridData.entryPoints.second.toString() << std::endl;
+				tempGridData.m_grid[tempGridData.entryPoints.first.getIndex(tempGridData.m_blueprint)] = getTileTypeFromLegend('=');
+				tempGridData.m_grid[tempGridData.entryPoints.second.getIndex(tempGridData.m_blueprint)] = getTileTypeFromLegend('#');
             }
 
         #pragma endregion

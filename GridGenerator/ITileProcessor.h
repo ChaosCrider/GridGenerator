@@ -6,23 +6,29 @@
 #include "IDoorMapper.h"
 #include "IFloorMapper.h"
 #include "GridBlueprint.h"
+#include "Coordinate.h"
+#include "gridData.h"
 
 class ITileProcessor {
 protected:
-
-    // the Level represented as a 2D vector
-    std::vector<ETileType> m_grid;
 
     // Intended to be called by the generate method.
     virtual void processWalls() = 0;
     virtual void processDoors() = 0;
     virtual void processFloors() = 0;
+    virtual void processEntryPoints() = 0;
+
+    // Protected default constructor to allow inheritance
+    ITileProcessor() = default;
+
+    // Protected virtual destructor to ensure proper cleanup
+    virtual ~ITileProcessor() = default;
 
 public:
 
-    // entry point of the logic, use to insert the different elements to prepare what game object should go where.
-    virtual std::vector<ETileType> generate(std::vector<ETileType>& grid, GridBlueprint& blueprint) = 0;
+    // Entry point of the logic, use to insert the different elements to prepare what game object should go where.
+    virtual ProtoGridData generate(ProtoGridData protoGridData) = 0;
 
-    //necessary to amke sure the resulting map is usable.
+    // Necessary to make sure the resulting map is usable.
     virtual bool validate() = 0;
 };

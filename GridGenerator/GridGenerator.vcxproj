@@ -126,6 +126,7 @@
   <ItemGroup>
     <ClCompile Include="BasicLayoutGenerator.cpp" />
     <ClCompile Include="BasicTileProcessor.cpp" />
+    <ClCompile Include="EndPointFinder.cpp" />
     <ClCompile Include="GridData.cpp" />
     <ClCompile Include="GridGenerator.cpp" />
     <ClCompile Include="GridManager.cpp" />
@@ -136,6 +137,7 @@
   <ItemGroup>
     <ClInclude Include="BasicLayoutGenerator.h" />
     <ClInclude Include="BasicTileProcessor.h" />
+    <ClInclude Include="EndPointFinder.h" />
     <ClInclude Include="GridManager.h" />
     <ClInclude Include="ICorridorMapper.h" />
     <ClInclude Include="IDoorMapper.h" />
